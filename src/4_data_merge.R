@@ -28,7 +28,7 @@ questionnaire <- load_questionnaire(data = data,
 
 data$weights = 1
 data$national <- "national"
-
+data[data=="NC"] <- NA
 
 data_merge <- data %>% select(-idp_code,-localisation_settlement_name,
                               -localisation_region,-localisation_district)
@@ -70,6 +70,25 @@ data <- data %>% mutate_at(c("snfi_nc_index1", "snfi_nc_index2", "snfi_nc_index3
                            ,as.character)
 
 
+x <- data %>%
+  group_by(localisation_district) %>%  summarize( 
+    cccm_site_duration_more_than_5_years = percent_response(cccm_site_duration, .,'more_than_5_years', group = !!get_group(.)),
+    cccm_site_duration_2_year_5_years = percent_response(cccm_site_duration, .,'2_year_5_years', group = !!get_group(.)),
+    cccm_site_duration_6_months_1_year = percent_response(cccm_site_duration, .,'6_months_1_year', group = !!get_group(.)),
+    cccm_site_duration_1_year_2_years = percent_response(cccm_site_duration, .,'1_year_2_years', group = !!get_group(.)),
+    cccm_site_duration_less_than_6_months = percent_response(cccm_site_duration, .,'less_than_6_months', group = !!get_group(.)),
+    cccm_site_duration_top_1_name = select_percents(cccm_site_duration, 1, ., questions, choices, 'label', group = !!get_group(.)),
+    cccm_site_duration_top_1_pct = select_percents(cccm_site_duration, 1, ., questions, choices, 'percent', group = !!get_group(.)),
+    cccm_site_duration_top_2_name = select_percents(cccm_site_duration, 2, ., questions, choices, 'label', group = !!get_group(.)),
+    cccm_site_duration_top_2_pct = select_percents(cccm_site_duration, 2, ., questions, choices, 'percent', group = !!get_group(.)),
+    cccm_site_duration_top_3_name = select_percents(cccm_site_duration, 3, ., questions, choices, 'label', group = !!get_group(.)),
+    cccm_site_duration_top_3_pct = select_percents(cccm_site_duration, 3, ., questions, choices, 'percent', group = !!get_group(.)),
+    cccm_site_duration_top_4_name = select_percents(cccm_site_duration, 4, ., questions, choices, 'label', group = !!get_group(.)),
+    cccm_site_duration_top_4_pct = select_percents(cccm_site_duration, 4, ., questions, choices, 'percent', group = !!get_group(.)),
+    cccm_populationestimates_shelters = weighted_sum(x = cccm_populationestimates_shelters,df = .,group = !!get_group(.)),
+    cccm_populationestimates_families = weighted_sum(x = cccm_populationestimates_families,df = .,group = !!get_group(.)),
+    cccm_populationestimates_individuals = weighted_sum(x = cccm_populationestimates_individuals,df = .,group = !!get_group(.)))
+    
 
 ####### District level data  ####### 
 data_merge_ditrict <- data %>%
@@ -87,10 +106,10 @@ data_merge_ditrict <- data %>%
     cccm_site_duration_top_3_pct = select_percents(cccm_site_duration, 3, ., questions, choices, 'percent', group = !!get_group(.)),
     cccm_site_duration_top_4_name = select_percents(cccm_site_duration, 4, ., questions, choices, 'label', group = !!get_group(.)),
     cccm_site_duration_top_4_pct = select_percents(cccm_site_duration, 4, ., questions, choices, 'percent', group = !!get_group(.)),
-    cccm_populationestimates_shelters = weighted_mean(x = cccm_populationestimates_shelters,df = .,digits = 0,group = !!get_group(.)),
-    cccm_populationestimates_families = weighted_mean(x = cccm_populationestimates_families,df = .,digits = 0,group = !!get_group(.)),
-    cccm_populationestimates_individuals = weighted_mean(x = cccm_populationestimates_individuals,df = .,digits = 0,group = !!get_group(.)),
-    cccm_populationestimates_twentypercent = weighted_mean(x = cccm_populationestimates_twentypercent,df = .,digits = 0,group = !!get_group(.)),
+    cccm_populationestimates_shelters = weighted_sum(x = cccm_populationestimates_shelters,df = .,group = !!get_group(.)),
+    cccm_populationestimates_families = weighted_sum(x = cccm_populationestimates_families,df = .,group = !!get_group(.)),
+    cccm_populationestimates_individuals = weighted_sum(x = cccm_populationestimates_individuals,df = .,group = !!get_group(.)),
+    cccm_populationestimates_twentypercent = weighted_sum(x = cccm_populationestimates_twentypercent,df = .,group = !!get_group(.)),
     cccm_site_capacity_yes = percent_response(cccm_site_capacity, .,'yes', group = !!get_group(.)),
     cccm_site_capacity_no = percent_response(cccm_site_capacity, .,'no', group = !!get_group(.)),
     cccm_idps_arrival_lessthanonemonth = percent_response(cccm_idps_arrival, .,'lessthanonemonth', group = !!get_group(.)),
@@ -1971,10 +1990,10 @@ data_merge_national <- data %>%
     cccm_site_duration_top_3_pct = select_percents(cccm_site_duration, 3, ., questions, choices, 'percent', group = !!get_group(.)),
     cccm_site_duration_top_4_name = select_percents(cccm_site_duration, 4, ., questions, choices, 'label', group = !!get_group(.)),
     cccm_site_duration_top_4_pct = select_percents(cccm_site_duration, 4, ., questions, choices, 'percent', group = !!get_group(.)),
-    cccm_populationestimates_shelters = weighted_mean(x = cccm_populationestimates_shelters,df = .,digits = 0,group = !!get_group(.)),
-    cccm_populationestimates_families = weighted_mean(x = cccm_populationestimates_families,df = .,digits = 0,group = !!get_group(.)),
-    cccm_populationestimates_individuals = weighted_mean(x = cccm_populationestimates_individuals,df = .,digits = 0,group = !!get_group(.)),
-    cccm_populationestimates_twentypercent = weighted_mean(x = cccm_populationestimates_twentypercent,df = .,digits = 0,group = !!get_group(.)),
+    cccm_populationestimates_shelters = weighted_sum(x = cccm_populationestimates_shelters,df = .,group = !!get_group(.)),
+    cccm_populationestimates_families = weighted_sum(x = cccm_populationestimates_families,df = .,group = !!get_group(.)),
+    cccm_populationestimates_individuals = weighted_sum(x = cccm_populationestimates_individuals,df = .,group = !!get_group(.)),
+    cccm_populationestimates_twentypercent = weighted_sum(x = cccm_populationestimates_twentypercent,df = .,group = !!get_group(.)),
     cccm_site_capacity_yes = percent_response(cccm_site_capacity, .,'yes', group = !!get_group(.)),
     cccm_site_capacity_no = percent_response(cccm_site_capacity, .,'no', group = !!get_group(.)),
     cccm_idps_arrival_lessthanonemonth = percent_response(cccm_idps_arrival, .,'lessthanonemonth', group = !!get_group(.)),
@@ -3851,7 +3870,7 @@ data_merge_output <- data_merge_output %>%
 
 ###### Exporting the results ###### 
 
-write.csv(data_merge_output,"output/Data merge/data_merge_output.csv",row.names = F)
+write.csv(data_merge_output,"output/Data merge/data_merge_output_1307.csv",row.names = F)
 
 
   
